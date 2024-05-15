@@ -42,6 +42,7 @@ import org.opensearch.sql.ast.expression.QualifiedName;
 import org.opensearch.sql.ast.expression.UnresolvedExpression;
 import org.opensearch.sql.ast.tree.AD;
 import org.opensearch.sql.ast.tree.Aggregation;
+import org.opensearch.sql.ast.tree.Append;
 import org.opensearch.sql.ast.tree.CloseCursor;
 import org.opensearch.sql.ast.tree.Dedupe;
 import org.opensearch.sql.ast.tree.Eval;
@@ -83,6 +84,7 @@ import org.opensearch.sql.expression.function.TableFunctionImplementation;
 import org.opensearch.sql.expression.parse.ParseExpression;
 import org.opensearch.sql.planner.logical.LogicalAD;
 import org.opensearch.sql.planner.logical.LogicalAggregation;
+import org.opensearch.sql.planner.logical.LogicalAppend;
 import org.opensearch.sql.planner.logical.LogicalCloseCursor;
 import org.opensearch.sql.planner.logical.LogicalDedupe;
 import org.opensearch.sql.planner.logical.LogicalEval;
@@ -289,6 +291,29 @@ public class Analyzer extends AbstractNodeVisitor<LogicalPlan, AnalysisContext> 
     }
 
     return new LogicalRename(child, renameMapBuilder.build());
+  }
+
+  /** Build {@link LogicalAppend}. */
+  @Override
+  public LogicalPlan visitAppend(Append node, AnalysisContext context) {
+    LogicalPlan child = node.getChild().get(0).accept(this, context);
+    ImmutableMap.Builder<ReferenceExpression, String> renameMapBuilder =
+            new ImmutableMap.Builder<>();
+    for (java.util.Map<UnresolvedExpression, String> renameMap : node.getAppendList()) {
+      for (UnresolvedExpression fieldToExtend : renameMap.keySet()) {
+        if (fieldToExtend instanceof Field) {
+          Expression origin = expressionAnalyzer.analyze(fieldToExtend, context);
+          ReferenceExpression target = new ReferenceExpression(
+                          ((Field) fieldToExtend).getField().toString(), origin.type());
+          renameMapBuilder.put(target, renameMap.get(fieldToExtend));
+        } else {
+          throw new SemanticCheckException(
+                  String.format("the target expected to be field, but is %s", fieldToExtend));
+        }
+      }
+    }
+
+    return new LogicalAppend(child, renameMapBuilder.build());
   }
 
   /** Build {@link LogicalAggregation}. */

@@ -7,6 +7,7 @@ package org.opensearch.sql.planner;
 
 import org.opensearch.sql.executor.pagination.PlanSerializer;
 import org.opensearch.sql.planner.logical.LogicalAggregation;
+import org.opensearch.sql.planner.logical.LogicalAppend;
 import org.opensearch.sql.planner.logical.LogicalCloseCursor;
 import org.opensearch.sql.planner.logical.LogicalDedupe;
 import org.opensearch.sql.planner.logical.LogicalEval;
@@ -26,6 +27,7 @@ import org.opensearch.sql.planner.logical.LogicalSort;
 import org.opensearch.sql.planner.logical.LogicalValues;
 import org.opensearch.sql.planner.logical.LogicalWindow;
 import org.opensearch.sql.planner.physical.AggregationOperator;
+import org.opensearch.sql.planner.physical.AppendOperator;
 import org.opensearch.sql.planner.physical.CursorCloseOperator;
 import org.opensearch.sql.planner.physical.DedupeOperator;
 import org.opensearch.sql.planner.physical.EvalOperator;
@@ -109,6 +111,11 @@ public class DefaultImplementor<C> extends LogicalPlanNodeVisitor<PhysicalPlan, 
   @Override
   public PhysicalPlan visitRename(LogicalRename node, C context) {
     return new RenameOperator(visitChild(node, context), node.getRenameMap());
+  }
+
+  @Override
+  public PhysicalPlan visitAppend(LogicalAppend node, C context) {
+    return new AppendOperator(visitChild(node, context), node.getAppendMap());
   }
 
   @Override

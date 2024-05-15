@@ -44,6 +44,7 @@ import org.opensearch.sql.ast.expression.When;
 import org.opensearch.sql.ast.expression.WindowFunction;
 import org.opensearch.sql.ast.expression.Xor;
 import org.opensearch.sql.ast.tree.Aggregation;
+import org.opensearch.sql.ast.tree.Append;
 import org.opensearch.sql.ast.tree.Dedupe;
 import org.opensearch.sql.ast.tree.Eval;
 import org.opensearch.sql.ast.tree.Filter;
@@ -125,6 +126,10 @@ public class AstDSL {
 
   public static UnresolvedPlan rename(UnresolvedPlan input, Map... maps) {
     return new Rename(Arrays.asList(maps), input);
+  }
+
+  public static UnresolvedPlan append(UnresolvedPlan input, java.util.Map<UnresolvedExpression, String>... maps) {
+    return new Append(Arrays.asList(maps), input);
   }
 
   /**

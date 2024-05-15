@@ -18,6 +18,7 @@ import org.opensearch.sql.executor.ExecutionEngine.ExplainResponse;
 import org.opensearch.sql.executor.ExecutionEngine.ExplainResponseNode;
 import org.opensearch.sql.expression.Expression;
 import org.opensearch.sql.planner.physical.AggregationOperator;
+import org.opensearch.sql.planner.physical.AppendOperator;
 import org.opensearch.sql.planner.physical.DedupeOperator;
 import org.opensearch.sql.planner.physical.EvalOperator;
 import org.opensearch.sql.planner.physical.FilterOperator;
@@ -121,6 +122,19 @@ public class Explain extends PhysicalPlanNodeVisitor<ExplainResponseNode, Object
         context,
         explainNode ->
             explainNode.setDescription(ImmutableMap.of("mapping", renameMappingDescription)));
+  }
+
+  @Override
+  public ExplainResponseNode visitAppend(AppendOperator node, Object context) {
+    Map<String, String> appendMappingDescription =
+        node.getAppend().entrySet().stream()
+            .collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue));
+
+    return explain(
+        node,
+        context,
+        explainNode ->
+            explainNode.setDescription(ImmutableMap.of("append", appendMappingDescription)));
   }
 
   @Override

@@ -40,6 +40,11 @@ public class PhysicalPlanDSL {
     return new RenameOperator(input, renameMap);
   }
 
+  public static AppendOperator append(
+      PhysicalPlan input, Map<ReferenceExpression, String> appendMap) {
+    return new AppendOperator(input, appendMap);
+  }
+
   public static ProjectOperator project(PhysicalPlan input, NamedExpression... fields) {
     return new ProjectOperator(input, Arrays.asList(fields), ImmutableList.of());
   }

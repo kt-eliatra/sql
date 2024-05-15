@@ -36,6 +36,7 @@ commands
    : whereCommand
    | fieldsCommand
    | renameCommand
+   | appendCommand
    | statsCommand
    | dedupCommand
    | sortCommand
@@ -75,6 +76,10 @@ fieldsCommand
 
 renameCommand
    : RENAME renameClasue (COMMA renameClasue)*
+   ;
+
+appendCommand
+   : APPEND appendClasue (COMMA appendClasue)*
    ;
 
 statsCommand
@@ -178,6 +183,10 @@ tableSourceClause
 
 renameClasue
    : orignalField = wcFieldExpression AS renamedField = wcFieldExpression
+   ;
+
+appendClasue
+   : textToAppend = stringLiteral TO originalField = wcFieldExpression
    ;
 
 byClause
@@ -823,6 +832,7 @@ keywordsCanBeId
    | WHERE
    | FIELDS
    | RENAME
+   | APPEND
    | STATS
    | DEDUP
    | SORT

@@ -49,6 +49,7 @@ import org.opensearch.sql.ast.expression.UnresolvedArgument;
 import org.opensearch.sql.ast.expression.UnresolvedExpression;
 import org.opensearch.sql.ast.tree.AD;
 import org.opensearch.sql.ast.tree.Aggregation;
+import org.opensearch.sql.ast.tree.Append;
 import org.opensearch.sql.ast.tree.Dedupe;
 import org.opensearch.sql.ast.tree.Eval;
 import org.opensearch.sql.ast.tree.Filter;
@@ -67,6 +68,7 @@ import org.opensearch.sql.ast.tree.UnresolvedPlan;
 import org.opensearch.sql.common.utils.StringUtils;
 import org.opensearch.sql.ppl.antlr.parser.OpenSearchPPLParser;
 import org.opensearch.sql.ppl.antlr.parser.OpenSearchPPLParser.AdCommandContext;
+import org.opensearch.sql.ppl.antlr.parser.OpenSearchPPLParser.AppendCommandContext;
 import org.opensearch.sql.ppl.antlr.parser.OpenSearchPPLParser.ByClauseContext;
 import org.opensearch.sql.ppl.antlr.parser.OpenSearchPPLParser.FieldListContext;
 import org.opensearch.sql.ppl.antlr.parser.OpenSearchPPLParser.KmeansCommandContext;
@@ -157,6 +159,16 @@ public class AstBuilder extends OpenSearchPPLParserBaseVisitor<UnresolvedPlan> {
                     new Map(
                         internalVisitExpression(ct.orignalField),
                         internalVisitExpression(ct.renamedField)))
+            .collect(Collectors.toList()));
+  }
+
+  /** Append command. */
+  @Override
+  public UnresolvedPlan visitAppendCommand(AppendCommandContext ctx) {
+    return new Append(
+        ctx.appendClasue().stream()
+            .map(
+                ct -> ImmutableMap.of(internalVisitExpression(ct.originalField), ct.textToAppend.getText()))
             .collect(Collectors.toList()));
   }
 

@@ -31,6 +31,9 @@ public abstract class PhysicalPlanNodeVisitor<R, C> {
   public R visitRename(RenameOperator node, C context) {
     return visitNode(node, context);
   }
+  public R visitAppend(AppendOperator node, C context) {
+    return visitNode(node, context);
+  }
 
   public R visitTableScan(TableScanOperator node, C context) {
     return visitNode(node, context);

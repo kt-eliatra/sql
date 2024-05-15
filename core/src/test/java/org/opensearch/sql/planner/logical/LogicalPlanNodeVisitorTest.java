@@ -207,6 +207,15 @@ class LogicalPlanNodeVisitorTest {
     }
 
     @Override
+    public Integer visitAppend(LogicalAppend plan, Object context) {
+      return 1
+          + plan.getChild().stream()
+              .map(child -> child.accept(this, context))
+              .mapToInt(Integer::intValue)
+              .sum();
+    }
+
+    @Override
     public Integer visitRareTopN(LogicalRareTopN plan, Object context) {
       return 1
           + plan.getChild().stream()

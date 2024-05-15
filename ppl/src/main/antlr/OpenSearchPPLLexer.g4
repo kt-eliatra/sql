@@ -17,6 +17,7 @@ FROM:                               'FROM';
 WHERE:                              'WHERE';
 FIELDS:                             'FIELDS';
 RENAME:                             'RENAME';
+APPEND:                             'APPEND';
 STATS:                              'STATS';
 DEDUP:                              'DEDUP';
 SORT:                               'SORT';

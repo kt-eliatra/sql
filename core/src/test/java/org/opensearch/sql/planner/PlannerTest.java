@@ -28,6 +28,7 @@ import org.opensearch.sql.DataSourceSchemaName;
 import org.opensearch.sql.data.type.ExprType;
 import org.opensearch.sql.expression.DSL;
 import org.opensearch.sql.planner.logical.LogicalAggregation;
+import org.opensearch.sql.planner.logical.LogicalAppend;
 import org.opensearch.sql.planner.logical.LogicalFilter;
 import org.opensearch.sql.planner.logical.LogicalPlan;
 import org.opensearch.sql.planner.logical.LogicalPlanDSL;
@@ -36,6 +37,7 @@ import org.opensearch.sql.planner.logical.LogicalRelation;
 import org.opensearch.sql.planner.logical.LogicalRename;
 import org.opensearch.sql.planner.optimizer.LogicalPlanOptimizer;
 import org.opensearch.sql.planner.physical.AggregationOperator;
+import org.opensearch.sql.planner.physical.AppendOperator;
 import org.opensearch.sql.planner.physical.FilterOperator;
 import org.opensearch.sql.planner.physical.PhysicalPlan;
 import org.opensearch.sql.planner.physical.PhysicalPlanDSL;
@@ -151,6 +153,11 @@ public class PlannerTest extends PhysicalPlanTestBase {
     @Override
     public PhysicalPlan visitRename(LogicalRename plan, Object context) {
       return new RenameOperator(plan.getChild().get(0).accept(this, context), plan.getRenameMap());
+    }
+
+    @Override
+    public PhysicalPlan visitAppend(LogicalAppend plan, Object context) {
+      return new AppendOperator(plan.getChild().get(0).accept(this, context), plan.getAppendMap());
     }
   }
 }
